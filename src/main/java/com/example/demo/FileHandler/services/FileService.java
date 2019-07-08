@@ -1,32 +1,36 @@
-package com.example.demo.services;
+package com.example.demo.FileHandler.services;
 
 
+import com.example.demo.SparkConnection.SparkConnection;
+import com.google.common.io.Resources;
 import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.sql.SparkSession;
 import org.springframework.stereotype.Service;
 import scala.Serializable;
-import scala.Tuple2;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
 @Service
 public class FileService  implements Serializable{
 
-    @Singleton
-     SparkConf sparkConf= new SparkConf().setAppName("TestApplication").setMaster("local[*]");
-    @Singleton
-       transient JavaSparkContext sparkContext= new JavaSparkContext(sparkConf);
+
+    transient JavaSparkContext sc = SparkConnection.getContext();
+
+   transient SparkSession ss = SparkConnection.getSession();
+
+
 
     public Integer getNumberWords()
     {
-        JavaRDD<String> inputFIle= this.sparkContext.textFile("/home/ibtihel/Desktop/ProjectSparkJava/textSpark");
+
+
+        JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("textSpark").getPath());
+
 
 
         JavaRDD<String> words = inputFIle.flatMap( new FlatMapFunction<String, String>() {
