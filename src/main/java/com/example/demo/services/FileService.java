@@ -17,13 +17,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 @Service
-public class FileService  {
+public class FileService  implements Serializable{
 
     @Singleton
      SparkConf sparkConf= new SparkConf().setAppName("TestApplication").setMaster("local[*]");
-
     @Singleton
-       JavaSparkContext sparkContext= new JavaSparkContext(sparkConf);
+       transient JavaSparkContext sparkContext= new JavaSparkContext(sparkConf);
 
     public Integer getNumberWords()
     {
