@@ -37,6 +37,12 @@ public class FileController {
         this.fileService.putEmptyColumns2();
     }
 
+    @GetMapping("/replaceByEMpty2")
+
+    public void  putEmptyColumns2()
+    {
+        this.fileService.putEmptyColumns2();
+    }
 
 
 }
