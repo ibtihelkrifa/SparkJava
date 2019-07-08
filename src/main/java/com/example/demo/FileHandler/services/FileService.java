@@ -78,22 +78,35 @@ public class FileService  implements Serializable{
     public void putEmptyColumns()
     {
         JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+        String newString="";
 
         JavaRDD<String> lines= inputFile.map(s->{
             String[] rows=s.split(";");
+            String s1= new String();
             for(String rowElement: rows)
             {
                 if(StringUtils.isBlank(rowElement))
                 {
                     rowElement="Empty";
+
+
                 }
+
+                s1+=rowElement+";";
+
+
+
             }
-            return  s;
+
+
+
+
+            return  s1.substring(0, s1.length()-1);
         });
 
 
 
-        lines.saveAsTextFile(Resources.getResource("Files").getPath()+"newFIle.csv");
+        lines.saveAsTextFile("Files/files.csv");
 
     }
 
