@@ -89,7 +89,7 @@ public class FileService  implements Serializable{
         String[] allColumns = inputFile.first().split(";",-1);
 
         JavaRDD<String[]> lines= inputFile.map(s->{
-            String[] rows=s.split(";");
+            String[] rows=s.split(";",-1);
 
             for(int i = 0 ; i < rows.length ; i++)
             {
