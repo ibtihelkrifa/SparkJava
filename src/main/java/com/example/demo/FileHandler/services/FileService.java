@@ -3,6 +3,7 @@ package com.example.demo.FileHandler.services;
 
 import com.example.demo.SparkConnection.SparkConnection;
 import com.google.common.io.Resources;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -47,11 +48,15 @@ public class FileService  implements Serializable{
     {
         JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
         JavaRDD<Integer> linesSize= inputFIle.map(s -> s.split(";").length );
-        
+
         return linesSize.collect();
 
     }
 
 
+ /*   public List<Integer> getNumberColumnsFlat()
+    {
+        JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+    }*/
 
 }
