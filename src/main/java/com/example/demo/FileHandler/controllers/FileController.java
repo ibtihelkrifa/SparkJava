@@ -23,12 +23,12 @@ public class FileController {
     }
 
 
-  /*  @GetMapping("/getNumberColumns")
+    @GetMapping("/getNumberColumns")
     public List<Integer> numberOfColumnsInEachLine()
     {
         return this.fileService.getNumberColumns();
 
-    }*/
+    }
 
 
 
