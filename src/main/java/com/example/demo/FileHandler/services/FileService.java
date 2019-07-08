@@ -88,25 +88,17 @@ public class FileService  implements Serializable{
                 if(StringUtils.isBlank(rowElement))
                 {
                     rowElement="Empty";
-
-
                 }
 
                 s1+=rowElement+";";
 
-
-
             }
-
-
-
 
             return  s1.substring(0, s1.length()-1);
         });
 
+        
 
-
-        lines.saveAsTextFile("Files/files.csv");
 
     }
 
