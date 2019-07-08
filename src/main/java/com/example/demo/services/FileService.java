@@ -28,14 +28,12 @@ public class FileService  implements Serializable{
     {
         JavaRDD<String> inputFIle= this.sparkContext.textFile("/home/ibtihel/Desktop/ProjectSparkJava/textSpark");
 
-        //JavaRDD<String> wordsFromFile = inputFIle.flatMap(content -> Arrays.asList(content.split(" ")));
 
         JavaRDD<String> words = inputFIle.flatMap( new FlatMapFunction<String, String>() {
 
             @Override public   Iterator<String> call(String s) { return Arrays.asList(s.split(" ")).iterator(); }
         });
 
-        //JavaPairRDD countData = words.mapToPair(t -> new Tuple2(t, 1)).reduceByKey((x, y) -> (int) x + (int) y);
         return words.collect().size();
 
     }
