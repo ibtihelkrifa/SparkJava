@@ -14,6 +14,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
@@ -108,17 +109,17 @@ public class FileService  implements Serializable{
 
         List<StructField> structFieldList =new ArrayList<>();
         for( String col : allColumns) {
-            structFieldList.add(DataTypes.createStructField(col, DataTypes.StringType,true));
+            structFieldList.add(DataTypes.createStructField(col, DataTypes.StringType,true,Metadata.empty()));
         }
 
 
         StructType schema = DataTypes.createStructType(structFieldList);
-        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(Arrays.asList(s)));
+        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(s));
 
 
         Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
 
-        dataFrameWithEmpty.take(5);
+        dataFrameWithEmpty.show();
     }
 
 
@@ -150,17 +151,17 @@ public class FileService  implements Serializable{
 
         List<StructField> structFieldList =new ArrayList<>();
         for( String col : allColumns) {
-            structFieldList.add(new StructField(col, DataTypes.StringType,true,null));
+            structFieldList.add(new StructField(col, DataTypes.StringType,true, Metadata.empty()));
         }
 
 
         StructType schema = new StructType(structFieldList.toArray(new StructField[0]));
-        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(Arrays.asList(s)));
+        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(s));
 
 
         Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
 
-        dataFrameWithEmpty.take(5);
+        dataFrameWithEmpty.show();
     }
 
 
