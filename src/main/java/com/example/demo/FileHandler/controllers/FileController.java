@@ -34,7 +34,7 @@ public class FileController {
 
     public void  putEmptyColumns()
     {
-        this.fileService.putEmptyColumns();
+        this.fileService.putEmptyColumns2();
     }
 
 

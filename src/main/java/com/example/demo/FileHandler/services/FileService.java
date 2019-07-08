@@ -9,13 +9,20 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import scala.Serializable;
 import scala.Tuple2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +34,7 @@ public class FileService  implements Serializable{
 
     transient JavaSparkContext sc = SparkConnection.getContext();
 
-   transient SparkSession ss = SparkConnection.getSession();
+    transient SparkSession ss = SparkConnection.getSession();
 
     Logger logger = LoggerFactory.getLogger(FileService.class);
 
@@ -51,9 +58,9 @@ public class FileService  implements Serializable{
     public List<Integer> getNumberColumns()
     {
 
-       JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
         String header = inputFile.first();
-       String[] columnNames = header.split(";",-1);
+        String[] columnNames = header.split(";",-1);
         int columnsLength = columnNames.length;
         logger.info("total column size = " + columnsLength);
 
@@ -68,7 +75,7 @@ public class FileService  implements Serializable{
             return numberOfElements;
 
         });
-        
+
         return linesSize.collect();
 
     }
@@ -78,32 +85,84 @@ public class FileService  implements Serializable{
     public void putEmptyColumns()
     {
         JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
-        String newString="";
 
-        JavaRDD<String> lines= inputFile.map(s->{
-            String[] rows=s.split(";");
-            String s1= new String();
-            for(String rowElement: rows)
+        String[] allColumns = inputFile.first().split(";",-1);
+
+        JavaRDD<String[]> lines= inputFile.map(s->{
+            String[] rows=s.split(";",-1);
+
+            for(int i = 0 ; i < rows.length ; i++)
             {
-                if(StringUtils.isBlank(rowElement))
+                if(StringUtils.isBlank(rows[i]))
                 {
-                    rowElement="Empty";
+                    rows[i]="Empty";
                 }
-
-                s1+=rowElement+";";
-
             }
 
-            return  s1.substring(0, s1.length()-1);
+
+
+
+            return  rows;
         });
 
-        
 
 
+        List<StructField> structFieldList =new ArrayList<>();
+        for( String col : allColumns) {
+            structFieldList.add(DataTypes.createStructField(col, DataTypes.StringType,true));
+        }
+
+
+        StructType schema = DataTypes.createStructType(structFieldList);
+        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(Arrays.asList(s)));
+
+
+        Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
+
+        dataFrameWithEmpty.take(5);
     }
 
 
 
+
+    public void putEmptyColumns2()
+    {
+        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+
+        String[] allColumns = inputFile.first().split(";",-1);
+
+        JavaRDD<String[]> lines= inputFile.map(s->{
+            String[] rows=s.split(";",-1);
+
+            for(int i = 0 ; i < rows.length ; i++)
+            {
+                if(StringUtils.isBlank(rows[i]))
+                {
+                    rows[i]="Empty";
+                }
+            }
+
+
+
+
+            return  rows;
+        });
+
+
+        List<StructField> structFieldList =new ArrayList<>();
+        for( String col : allColumns) {
+            structFieldList.add(new StructField(col, DataTypes.StringType,true,null));
+        }
+
+
+        StructType schema = new StructType(structFieldList.toArray(new StructField[0]));
+        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(Arrays.asList(s)));
+
+
+        Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
+
+        dataFrameWithEmpty.take(5);
+    }
 
 
  /*   public List<Integer> getNumberColumnsFlat()
