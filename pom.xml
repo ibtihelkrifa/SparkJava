@@ -59,6 +59,11 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>4.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
