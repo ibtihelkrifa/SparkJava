@@ -8,6 +8,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import scala.Serializable;
 
@@ -24,7 +26,7 @@ public class FileService  implements Serializable{
 
    transient SparkSession ss = SparkConnection.getSession();
 
-
+    Logger logger = LoggerFactory.getLogger(FileService.class);
 
     public Integer getNumberWords()
     {
@@ -45,8 +47,12 @@ public class FileService  implements Serializable{
 
     public List<Integer> getNumberColumns()
     {
-        JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
-        JavaRDD<Integer> linesSize= inputFIle.map(s -> s.split(";").length );
+        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+        String header = inputFile.first();
+        String[] columnNames = header.split(";",-1);
+        int columnsLength = columnNames.length;
+        logger.info("total column size = " + columnsLength);
+        JavaRDD<Integer> linesSize= inputFile.map(s -> s.split(";").length );
         
         return linesSize.collect();
 
