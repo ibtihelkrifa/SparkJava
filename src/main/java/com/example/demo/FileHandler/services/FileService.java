@@ -3,7 +3,8 @@ package com.example.demo.FileHandler.services;
 
 import com.example.demo.SparkConnection.SparkConnection;
 import com.google.common.io.Resources;
-import org.apache.spark.api.java.JavaPairRDD;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -55,11 +56,44 @@ public class FileService  implements Serializable{
        String[] columnNames = header.split(";",-1);
         int columnsLength = columnNames.length;
         logger.info("total column size = " + columnsLength);
-        JavaRDD<Integer> linesSize= inputFile.map(s -> s.split(";",-1).length );
 
 
 
+        JavaRDD<Integer> linesSize= inputFile.map(s -> {
+            String[] row_arr = s.split(";",-1);
+            int numberOfElements = 0 ;
+            for(String row_element : row_arr){
+                if(StringUtils.isNotBlank(row_element)) numberOfElements++;
+            }
+            return numberOfElements;
+
+        });
+        
         return linesSize.collect();
+
+    }
+
+
+
+    public void putEmptyColumns()
+    {
+        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+
+        JavaRDD<String> lines= inputFile.map(s->{
+            String[] rows=s.split(";");
+            for(String rowElement: rows)
+            {
+                if(StringUtils.isBlank(rowElement))
+                {
+                    rowElement="Empty";
+                }
+            }
+            return  s;
+        });
+
+
+
+        lines.saveAsTextFile(Resources.getResource("Files").getPath()+"newFIle.csv");
 
     }
 
