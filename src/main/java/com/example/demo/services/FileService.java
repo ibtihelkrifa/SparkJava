@@ -11,15 +11,19 @@ import org.springframework.stereotype.Service;
 import scala.Serializable;
 import scala.Tuple2;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
 @Service
-public class FileService implements Serializable {
+public class FileService  {
 
-    SparkConf sparkConf= new SparkConf().setAppName("TestApplication").setMaster("local[*]");
-    public transient  JavaSparkContext sparkContext= new JavaSparkContext(sparkConf);
+    @Singleton
+     SparkConf sparkConf= new SparkConf().setAppName("TestApplication").setMaster("local[*]");
+
+    @Singleton
+       JavaSparkContext sparkContext= new JavaSparkContext(sparkConf);
 
     public Integer getNumberWords()
     {
