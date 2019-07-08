@@ -16,7 +16,7 @@ public class SparkConnection implements Serializable {
      */
     private static final long serialVersionUID = -8907765312906929878L;
     //A name for the spark instance. Can be any string
-    private static String appName = "EA";
+    private static String appName = "Ibtihel-Spark-Spring";
     //Pointer / URL to the Spark instance - embedded
     private static String sparkMaster = "local[*]";
 

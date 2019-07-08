@@ -3,7 +3,6 @@ package com.example.demo.FileHandler.services;
 
 import com.example.demo.SparkConnection.SparkConnection;
 import com.google.common.io.Resources;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -11,7 +10,6 @@ import org.apache.spark.sql.SparkSession;
 import org.springframework.stereotype.Service;
 import scala.Serializable;
 
-import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -29,7 +27,7 @@ public class FileService  implements Serializable{
     {
 
 
-        JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("textSpark").getPath());
+        JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("Files/textSpark").getPath());
 
 
 
