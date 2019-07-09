@@ -1,0 +1,23 @@
+Data_Line;Life_ID;Policy_ID;Exposure_or_Event;Reporting_Year;Benefit_ID;Gender;Date_of_Birth;Date_of_Commencement;Main_Risk_Type;Risk_Amount_Insurer;Type_of_Event;Date_of_Event_Incurred;Event_Amount_Insurer;Product_ID;Smoker_Status;date_of_end_current_condition
+1;1;1;Exposure;2017;ACCI_1;;15/02/1984;13/02/2004;Life;20000;;;;Prod_1;Smoker;
+2;2;2;Exposure;2017;ACCI_1;;15/05/1972;13/05/2004;Life;30000;;;;Prod_1;Smoker;
+3;3;3;Exposure;2017;ACCI_1;Male;15/02/1981;13/02/2004;Life;70000;;;;Prod_1;Smoker;
+4;4;4;Exposure;2017;ACCI_1;Male;04/08/1964;04/08/2004;Life;20000;;;;Prod_1;Smoker;
+5;5;5;Exposure;2017;ACCI_1;Male;30/03/1968;30/03/2005;Life;20000;;;;Prod_1;Smoker;
+6;6;6;Exposure;2017;ACCI_1;Male;27/07/1964;27/07/2004;Life;30000;;;;Prod_1;Smoker;
+7;7;7;Exposure;2017;ACCI_1;Male;26/01/1971;26/01/2004;Life;30000;;;;Prod_1;Smoker;
+8;8;8;Exposure;2017;ACCI_1;Male;15/02/1984;13/02/2004;Life;70000;;;;Prod_1;Non Smoker;
+9;9;9;Exposure;2017;ACCI_1;Female;15/05/1972;13/05/2004;Life;70000;;;;Prod_1;Non Smoker;
+10;10;10;Exposure;2017;ACCI_1;Male;15/02/1981;13/02/2004;Life;70000;;;;Prod_1;Non Smoker;
+11;11;11;Exposure;2017;ACCI_1;Male;04/08/1964;04/08/2004;Life;20000;;;;Prod_1;Non Smoker;
+12;12;12;Exposure;2017;ACCI_1;Male;30/03/1968;30/03/2005;Life;20000;;;;Prod_1;Non Smoker;
+13;13;13;Exposure;2017;ACCI_1;Male;27/07/1964;27/07/2004;Life;30000;;;;Prod_1;Non Smoker;
+14;14;14;Exposure;2017;ACCI_1;Male;26/01/1971;26/01/2004;Life;30000;;;;Prod_1;Non Smoker;
+15;15;15;Event;2017;ACCI_1;Male;04/08/1964;04/08/2004;Life;;Withdrawal;;20000;Prod_1;Smoker;
+16;1;1;Event;2017;ACCI_1;;30/03/1968;30/03/2005;Life;;Withdrawal;06/01/2017;20000;Prod_1;Smoker;
+17;2;2;Event;2017;ACCI_1;;27/07/1964;27/07/2004;Life;;Death;14/06/2017;30000;Prod_1;Smoker;
+18;18;18;Event;2017;ACCI_1;Male;26/01/1971;26/01/2004;Life;;Death;17/01/2017;30000;Prod_1;Smoker;
+19;19;19;Event;2017;ACCI_1;Male;04/08/1964;04/08/2004;Life;;Withdrawal;06/01/2017;20000;Prod_1;Non Smoker;
+20;20;20;Event;2017;ACCI_1;Male;30/03/1968;30/03/2005;Life;;Withdrawal;06/01/2017;20000;Prod_1;Non Smoker;
+21;21;21;Event;2017;ACCI_1;Male;27/07/1964;27/07/2004;Life;;Death;14/06/2017;30000;Prod_1;Non Smoker;
+22;22;22;Event;2017;ACCI_1;Male;26/01/1971;26/01/2004;Life;;Death;17/01/2017;30000;Prod_1;Non Smoker;
