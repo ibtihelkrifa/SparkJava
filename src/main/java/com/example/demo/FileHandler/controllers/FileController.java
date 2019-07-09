@@ -4,6 +4,7 @@ package com.example.demo.FileHandler.controllers;
 import com.example.demo.FileHandler.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class FileController {
     FileService fileService;
 
 
-    @GetMapping("/getcount/")
+    @GetMapping("/getcount")
     public Integer readFile()
     {
        return this.fileService.getNumberWords();
@@ -30,31 +31,33 @@ public class FileController {
 
     }
 
-    @GetMapping("/replaceByEMpty")
+    @GetMapping("/replaceByEMpty/{id}")
 
-    public void  putEmptyColumns()
+    public void  putEmptyColumns(@PathVariable String id)
     {
-        this.fileService.putEmptyColumns2();
+        System.out.println(id);
+        this.fileService.putEmptyColumns2(id);
     }
 
-    @GetMapping("/replaceByEMpty2")
+    /*@GetMapping("/replaceByEMpty2/{id}")
 
-    public void  putEmptyColumns2()
+    public void  putEmptyColumns2(String id)
     {
-        this.fileService.putEmptyColumns2();
+        this.fileService.putEmptyColumns2(id);
+    }*/
+
+    @GetMapping("/flatmap/{id}")
+    public void  flatMapAndReduceByKeyExample(@PathVariable  String id)
+    {
+        this.fileService.flatMapAndReduceByKeyExample(id);
     }
 
-    @GetMapping("/flatmap")
-    public void  flatMapAndReduceByKeyExample()
-    {
-        this.fileService.flatMapAndReduceByKeyExample();
-    }
 
-
-    @GetMapping("/filter")
-    public void  filterOnWordsLength()
+    @GetMapping("/filter/{id}")
+    public void  filterOnWordsLength(@PathVariable  String id)
     {
-        this.fileService.filterOnWordsLength();
+        System.out.println(id);
+        this.fileService.filterOnWordsLength(id);
     }
 
 

@@ -126,7 +126,7 @@ public class FileService  implements Serializable{
 
 
 
-    public void putEmptyColumns2()
+    public void putEmptyColumns2(String id)
     {
         JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
 
@@ -168,9 +168,10 @@ public class FileService  implements Serializable{
         dataFrameWithEmpty.coalesce(1)
                 .write()
                 .mode ("overwrite")
+                .mode("append")
                 .format("com.databricks.spark.csv")
                 .option("header", "true")
-                .save("outputFiles/EmptyFunction/filename");
+                .save("outputFiles/"+id);
 
 
 
@@ -179,7 +180,7 @@ public class FileService  implements Serializable{
 
 
 
-    public void flatMapAndReduceByKeyExample()
+    public void flatMapAndReduceByKeyExample(String id)
     {
         JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/textSpark").getPath());
 
@@ -199,13 +200,13 @@ public class FileService  implements Serializable{
         JavaPairRDD<String,java.lang.Iterable<Integer>> wordsGroupedByKey= pairWords.groupByKey();
 
         counts.saveAsTextFile("counts");
-        wordsGroupedByKey.saveAsTextFile("outputFiles/groupByKey");
+        wordsGroupedByKey.coalesce(1).saveAsTextFile("outputFiles/"+id);
 
     }
 
 
 
-    public void filterOnWordsLength()
+    public void filterOnWordsLength(String id)
     {
         JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/textSpark").getPath());
 
@@ -215,7 +216,7 @@ public class FileService  implements Serializable{
 
         JavaRDD<String> filtredWords= words.filter(word -> word.length()> 4);
 
-        filtredWords.saveAsTextFile("outputFiles/filtredWords");
+        filtredWords.coalesce(1).saveAsTextFile("outputFiles/"+id);
 
 
     }
@@ -248,6 +249,7 @@ public class FileService  implements Serializable{
 
         femaleDataset.coalesce(1)
                 .write()
+                .mode("append")
                 .mode ("overwrite")
                 .format("com.databricks.spark.csv")
                 .option("header", "true")

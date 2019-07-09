@@ -6,7 +6,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 
 import java.io.Serializable;
-
+import java.nio.file.FileSystem;
 
 
 public class SparkConnection implements Serializable {
@@ -34,7 +34,10 @@ public class SparkConnection implements Serializable {
 //					.set("spark.default.parallelism", "6")
                     .set("spark.driver.memory", "10g")
                     .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-                    .setMaster(sparkMaster).set("spark.scheduler.mode", "FAIR");
+                    .set("mapreduce.fileoutputcommitter.marksuccessfuljobs", "false")
+                    .set("parquet.enable.summary-metadata", "false")
+                    .setMaster(sparkMaster).set("spark.scheduler.mode", "FAIR")
+                    ;
 
             //Make sure you download the winutils binaries into this directory
             //from https://github.com/srccodes/hadoop-common-2.2.0-bin/archive/master.zip
@@ -51,6 +54,8 @@ public class SparkConnection implements Serializable {
                     .config("spark.scheduler.mode", "FAIR")
                     .getOrCreate();
 
+
+                    
         }
 
     }
