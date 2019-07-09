@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TestService {
+public class TestServiceRDD {
 
     transient JavaSparkContext sc = SparkConnection.getContext();
 

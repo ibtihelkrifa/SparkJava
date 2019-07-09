@@ -1,29 +1,25 @@
 package com.example.demo.FileHandler.controllers;
 
 
-import com.example.demo.FileHandler.services.TestService;
+import com.example.demo.FileHandler.services.TestServiceRDD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import scala.tools.nsc.typechecker.Macros;
-import scala.util.Success;
 
 @RestController
 public class TestController {
 
 
     @Autowired
-    TestService testService;
+    TestServiceRDD testService;
 
 
 
