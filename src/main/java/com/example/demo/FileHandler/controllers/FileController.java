@@ -51,7 +51,11 @@ public class FileController {
     }
 
 
-
+    @GetMapping("/filter")
+    public void  filterOnWordsLength()
+    {
+        this.fileService.filterOnWordsLength();
+    }
 
 
 }

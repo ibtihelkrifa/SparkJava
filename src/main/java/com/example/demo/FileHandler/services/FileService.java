@@ -206,6 +206,22 @@ public class FileService  implements Serializable{
 
 
 
+    public void filterOnWordsLength()
+    {
+        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/textSpark").getPath());
+
+
+
+        JavaRDD<String> words = inputFile.flatMap(s->{ return Arrays.asList(s.split(" ")).iterator();});
+
+        JavaRDD<String> filtredWords= words.filter(word -> word.length()> 4);
+
+        filtredWords.saveAsTextFile("filtredWords");
+
+
+    }
+
+
 
 
 
