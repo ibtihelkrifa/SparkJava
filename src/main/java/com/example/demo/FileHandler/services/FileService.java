@@ -186,19 +186,25 @@ public class FileService  implements Serializable{
 
 
 
-        JavaRDD words = inputFile.flatMap(s->
+        JavaRDD<String> words = inputFile.flatMap(s->
               Arrays.asList(s.split(" ")).iterator()
 
         );
 
 
         JavaPairRDD<String,Integer> pairWords= words.mapToPair(word-> new Tuple2(word,1));
+        JavaPairRDD<String,Integer> mapValues=pairWords.mapValues(v-> v+1);
 
-        JavaPairRDD<String,Integer> counts = pairWords.reduceByKey((a,b)-> a + b );
+        JavaPairRDD<String,Integer> counts = mapValues.reduceByKey((a,b)-> a + b );
+
+        JavaPairRDD<String,java.lang.Iterable<Integer>> wordsGroupedByKey= pairWords.groupByKey();
 
         counts.saveAsTextFile("counts");
+        wordsGroupedByKey.saveAsTextFile("groupByKey");
 
     }
+
+
 
 
 
