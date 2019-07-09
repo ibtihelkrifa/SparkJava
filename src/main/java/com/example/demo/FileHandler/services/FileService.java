@@ -5,6 +5,7 @@ import com.example.demo.SparkConnection.SparkConnection;
 import com.google.common.io.Resources;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -13,6 +14,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.sources.In;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
@@ -156,6 +158,7 @@ public class FileService  implements Serializable{
 
 
         StructType schema = new StructType(structFieldList.toArray(new StructField[0]));
+
         JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(s));
 
 
@@ -175,9 +178,31 @@ public class FileService  implements Serializable{
     }
 
 
- /*   public List<Integer> getNumberColumnsFlat()
+
+
+    public void flatMapAndReduceByKeyExample()
     {
-        JavaRDD<String> inputFIle= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
-    }*/
+        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/textSpark").getPath());
+
+
+
+        JavaRDD words = inputFile.flatMap(s->
+              Arrays.asList(s.split(" ")).iterator()
+
+        );
+
+
+        JavaPairRDD<String,Integer> pairWords= words.mapToPair(word-> new Tuple2(word,1));
+
+        JavaPairRDD<String,Integer> counts = pairWords.reduceByKey((a,b)-> a + b );
+
+        counts.saveAsTextFile("counts");
+
+    }
+
+
+
+
+
 
 }

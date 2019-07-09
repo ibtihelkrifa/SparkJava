@@ -44,5 +44,14 @@ public class FileController {
         this.fileService.putEmptyColumns2();
     }
 
+    @GetMapping("/flatmap")
+    public void  flatMapAndReduceByKeyExample()
+    {
+        this.fileService.flatMapAndReduceByKeyExample();
+    }
+
+
+
+
 
 }
