@@ -163,9 +163,12 @@ public class FileService  implements Serializable{
 
         dataFrameWithEmpty.show();
 
-        dataFrameWithEmpty.coalesce(1).write().option("header", "true")
-                .mode("Overwrite")
-                .save("out.csv");
+        dataFrameWithEmpty.coalesce(1)
+                .write()
+                .mode ("overwrite")
+                .format("com.databricks.spark.csv")
+                .option("header", "true")
+                .save("filename.csv");
 
 
 
