@@ -58,4 +58,10 @@ public class FileController {
     }
 
 
+
+    @GetMapping("/filterBySex")
+    public void filterBySex()
+    {
+        this.fileService.FilterBySex();
+    }
 }

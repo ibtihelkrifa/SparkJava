@@ -4,6 +4,7 @@ package com.example.demo.FileHandler.services;
 import com.example.demo.SparkConnection.SparkConnection;
 import com.google.common.io.Resources;
 
+import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -15,10 +16,8 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.sources.In;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.Metadata;
-import org.apache.spark.sql.types.StructField;
-import org.apache.spark.sql.types.StructType;
+import org.apache.spark.sql.types.*;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -221,6 +220,42 @@ public class FileService  implements Serializable{
 
     }
 
+
+    public void FilterBySex()
+    {
+        JavaRDD<String> fileInput= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
+
+        String[] header= fileInput.first().split(";",-1);
+
+        List<StructField> structFieldList =new ArrayList<>();
+
+        for(int i=0;i<header.length;i++)
+        {
+            structFieldList.add(new StructField(header[i], DataTypes.StringType,true, Metadata.empty()));
+        }
+
+        StructType schema= new StructType(structFieldList.toArray(new StructField[0]));
+
+        JavaRDD<Row> lines= fileInput.map(s-> RowFactory.create(s));
+
+        Dataset<Row> fulldataset= ss.createDataFrame(lines,schema);
+
+        Dataset<Row> femaleDataset= fulldataset.filter("Gender=Female");
+
+       // fulldataset.createOrReplaceTempView("fulldataset");
+        //Dataset<Row> femaleDataset=ss.sql("select * from fulldataset where Gender='Female' ");
+
+
+        femaleDataset.coalesce(1)
+                .write()
+                .mode ("overwrite")
+                .format("com.databricks.spark.csv")
+                .option("header", "true")
+                .save("female.csv");
+
+
+
+    }
 
 
 
