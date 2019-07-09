@@ -83,7 +83,7 @@ public class FileService  implements Serializable{
 
 
 
-    public void putEmptyColumns()
+  /*  public void putEmptyColumns()
     {
         JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
 
@@ -120,7 +120,7 @@ public class FileService  implements Serializable{
         Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
 
         dataFrameWithEmpty.show();
-    }
+    }*/
 
 
 
@@ -162,6 +162,13 @@ public class FileService  implements Serializable{
         Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
 
         dataFrameWithEmpty.show();
+
+        dataFrameWithEmpty.coalesce(1).write().option("header", "true")
+                .mode("Overwrite")
+                .save("out.csv");
+
+
+
     }
 
 
