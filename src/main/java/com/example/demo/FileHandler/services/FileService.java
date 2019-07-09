@@ -170,7 +170,7 @@ public class FileService  implements Serializable{
                 .mode ("overwrite")
                 .format("com.databricks.spark.csv")
                 .option("header", "true")
-                .save("filename.csv");
+                .save("outputFiles/EmptyFunction/filename");
 
 
 
@@ -199,7 +199,7 @@ public class FileService  implements Serializable{
         JavaPairRDD<String,java.lang.Iterable<Integer>> wordsGroupedByKey= pairWords.groupByKey();
 
         counts.saveAsTextFile("counts");
-        wordsGroupedByKey.saveAsTextFile("groupByKey");
+        wordsGroupedByKey.saveAsTextFile("outputFiles/groupByKey");
 
     }
 
@@ -215,7 +215,7 @@ public class FileService  implements Serializable{
 
         JavaRDD<String> filtredWords= words.filter(word -> word.length()> 4);
 
-        filtredWords.saveAsTextFile("filtredWords");
+        filtredWords.saveAsTextFile("outputFiles/filtredWords");
 
 
     }
@@ -251,7 +251,7 @@ public class FileService  implements Serializable{
                 .mode ("overwrite")
                 .format("com.databricks.spark.csv")
                 .option("header", "true")
-                .save("female.csv");
+                .save("outputFiles/female");
 
 
 
