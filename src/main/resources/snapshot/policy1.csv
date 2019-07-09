@@ -1,4 +1,4 @@
-Data_Line;Life_ID;Policy_ID;Exposure_or_Event;Reporting_Year;Benefit_ID;Gender;Date_of_Birth;Date_of_Commencement;Main_Risk_Type;Risk_Amount_Insurer;Type_of_Event;Date_of_Event_Incurred;Event_Amount_Insurer;Product_ID;Smoker_Status;date_of_end_current_condition
+Data_Line;Life_ID;Policy_ID;Exposure_or_Event;Reporting_Year;Benefit_ID;Gender;Date_of_Birth;Date_of_Commencement;Main_Risk_Type;Risk_Amount_Insurer;Type_of_Event;Date_of_Event_Incurred;Event_Amount_Insurer;Product_ID;Smoker_Status
 1;1;1;Exposure;2017;ACCI_1;;15/02/1984;13/02/2004;Life;20000;;;;Prod_1;Smoker;
 2;2;2;Exposure;2017;ACCI_1;;15/05/1972;13/05/2004;Life;30000;;;;Prod_1;Smoker;
 3;3;3;Exposure;2017;ACCI_1;Male;15/02/1981;13/02/2004;Life;70000;;;;Prod_1;Smoker;

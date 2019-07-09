@@ -5,6 +5,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 
+import java.io.File;
 import java.io.Serializable;
 import java.nio.file.FileSystem;
 
@@ -55,7 +56,6 @@ public class SparkConnection implements Serializable {
                     .getOrCreate();
 
 
-                    
         }
 
     }
