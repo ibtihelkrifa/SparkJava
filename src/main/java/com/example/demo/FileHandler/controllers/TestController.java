@@ -68,5 +68,12 @@ public class TestController {
     }
 
 
+    @GetMapping("/RDDunion/{idhash1}/{idhash2}")
+        public void UnionWithRDD(@PathVariable int idhash1, @PathVariable int idhash2)
+        {
+            testService.UnionWithRDD(idhash1,idhash2);
+        }
+
+
 
 }

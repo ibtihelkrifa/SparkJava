@@ -85,46 +85,6 @@ public class FileService  implements Serializable{
 
 
 
-  /*  public void putEmptyColumns()
-    {
-        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
-
-        String[] allColumns = inputFile.first().split(";",-1);
-
-        JavaRDD<String[]> lines= inputFile.map(s->{
-            String[] rows=s.split(";",-1);
-
-            for(int i = 0 ; i < rows.length ; i++)
-            {
-                if(StringUtils.isBlank(rows[i]))
-                {
-                    rows[i]="Empty";
-                }
-            }
-
-
-
-
-            return  rows;
-        });
-
-
-        List<StructField> structFieldList =new ArrayList<>();
-        for( String col : allColumns) {
-            structFieldList.add(DataTypes.createStructField(col, DataTypes.StringType,true,Metadata.empty()));
-        }
-
-
-        StructType schema = DataTypes.createStructType(structFieldList);
-        JavaRDD<Row> linesRow = lines.map(s-> RowFactory.create(s));
-
-
-        Dataset<Row> dataFrameWithEmpty = ss.createDataFrame(linesRow,schema);
-
-        dataFrameWithEmpty.show();
-    }*/
-
-
 
 
     public void putEmptyColumns2(String id)

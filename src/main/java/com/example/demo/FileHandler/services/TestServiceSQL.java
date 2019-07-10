@@ -67,7 +67,7 @@ public class TestServiceSQL {
         dataset1.collectAsList().forEach(row -> {
             l.add(new String(row.getString(0) + ":" + row.getInt(1)));
         });
-        
+
         String Value = "";
 
         for (int i = 0; i < l.size(); i++) {
