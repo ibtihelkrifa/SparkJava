@@ -35,9 +35,8 @@ public class TestServiceRDD {
 
     public  String getEmptyCells(int idhash)
     {
-        JavaRDD<String> inputFile= sc.textFile(Resources.getResource("Files/policy.csv").getPath());
 
-        //JavaRDD<String> inputFile= sc.textFile(idhash+".csv");
+        JavaRDD<String> inputFile= sc.textFile(idhash+".csv");
         String header = inputFile.first();
 
         String[] columnNames = header.split(";",-1);
