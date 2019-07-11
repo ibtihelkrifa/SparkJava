@@ -81,8 +81,8 @@ public class TestServiceRDD {
 
 
     public void UnionWithRDD(int idhash1, int idhash2) {
-        JavaRDD<String> inputFile1 = sc.textFile(Resources.getResource("Files/" + idhash1 + ".csv").getPath());
-        JavaRDD<String> inputFile2 = sc.textFile(Resources.getResource("Files/" + idhash2 + ".csv").getPath());
+        JavaRDD<String> inputFile1 = sc.textFile(Resources.getResource("Files/test1.csv").getPath());
+        JavaRDD<String> inputFile2 = sc.textFile(Resources.getResource("Files/test2.csv").getPath());
 
         Dataset<Row> d1 = getDataFrame(inputFile1);
         Dataset<Row> d2 = getDataFrame(inputFile2);
@@ -100,7 +100,7 @@ public class TestServiceRDD {
         List<String> allHeaders = new ArrayList<>();
         allHeaders.addAll(headerFile1);
         allHeaders.addAll(headerFile2);
-
+        allHeaders=allHeaders.stream().distinct().collect(Collectors.toList());
 
 
         d1.createOrReplaceTempView("d1");
@@ -155,7 +155,18 @@ public class TestServiceRDD {
         String querry = "";
 
 
-        return querry;
+        for (int i = 0; i < allHeaders.size(); i++) {
+            if (!SingleFileHeader.contains(allHeaders.get(i))) {
+                allHeaders.set(i, null);
+            }
+        }
+
+        for (String e : allHeaders) {
+            querry += "," + e;
+        }
+        System.out.println(querry);
+        return querry.substring(1);
+
     }
 
 }
