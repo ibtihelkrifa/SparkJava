@@ -183,4 +183,17 @@ public class TestServiceRDD {
         return dataFrame1;
     }
 
+
+
+
+
+    /** this function takes allheaders / and Single File header and constructs a querry for union*/
+
+    public String createQuerry(List<String> allHeaders , List<String> SingleFileHeader){
+        String querry = "";
+
+
+        return querry;
+    }
+
 }
