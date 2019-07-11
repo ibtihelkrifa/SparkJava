@@ -21,6 +21,7 @@ import javax.xml.validation.Schema;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,48 @@ public class TestServiceRDD {
 
         return outputValue;
 
+
+    }
+
+
+    public void dynamicUNionRDD(List<Integer> idhashFIles)
+    {
+
+        List<String> allheaders= new ArrayList<>();
+        List<List<String>> ListSingleHeaders= new ArrayList<>();
+        List<Dataset<Row>> ListDataset= new ArrayList<>();
+        for(Integer idhashFile: idhashFIles)
+        {
+            JavaRDD<String> inputFile1 = sc.textFile(Resources.getResource("Files/test1.csv").getPath());
+            Dataset<Row> d1 = getDataFrame(inputFile1);
+            String header1 = inputFile1.first();
+            List<String> headerFile1 = new ArrayList<>(Arrays.asList(header1.split(";", -1)));
+            allheaders.addAll(headerFile1);
+            ListSingleHeaders.add(headerFile1);
+            ListDataset.add(d1);
+
+        }
+
+
+        allheaders=allheaders.stream().distinct().collect(Collectors.toList());
+
+        List<String> ListQuery= new ArrayList<>();
+
+        for(List<String> e: ListSingleHeaders )
+        {
+            String query= createQuerry(allheaders, e);
+            ListQuery.add(query);
+        }
+
+        String finalQuery="";
+
+        for(int i=0; i<ListQuery.size();i++)
+        {
+            finalQuery+= "select " + ListQuery.get(i) + " from " + ListDataset.get(i) +" union";
+        }
+
+        finalQuery.substring(0, finalQuery.length()-5);
+        ss.sql(finalQuery);
 
     }
 
