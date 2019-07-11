@@ -25,55 +25,44 @@ public class TestController {
     TestServiceSQL testServiceSQL;
 
 
-
     @PostMapping("/uploadFile")
-    public ResponseEntity<String>  uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
 
-        if(file.isEmpty())
-        {
+        if (file.isEmpty()) {
             return new ResponseEntity<>("EMpty File ", HttpStatus.BAD_REQUEST);
-        }
-
-        else
-        {
-            int hashcode=file.getName().getBytes().hashCode();
+        } else {
+            int hashcode = file.getName().getBytes().hashCode();
             System.out.println(String.valueOf(hashcode));
 
-            Path  pathInput = Paths.get( "/Files/"+hashcode +".csv");
+            Path pathInput = Paths.get("/Files/" + hashcode + ".csv");
             try {
                 Files.write(pathInput, file.getBytes());
-            }
-
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
 
-            return new ResponseEntity<>("File uploade " , HttpStatus.OK);
+            return new ResponseEntity<>("File uploade ", HttpStatus.OK);
         }
 
 
     }
 
     @GetMapping("/verifyFile/{idhash}")
-    public String getEmptyCells(@PathVariable int idhash)
-    {
+    public String getEmptyCells(@PathVariable int idhash) {
         return testService.getEmptyCells(idhash);
     }
 
     @GetMapping("/verifyFile/sql/{idhash}")
-    public String getEmptyCellsSQL(@PathVariable int idhash)
-    {
+    public String getEmptyCellsSQL(@PathVariable int idhash) {
         return testServiceSQL.getEmptyCells(idhash);
     }
 
 
     @GetMapping("/RDDunion/{idhash1}/{idhash2}")
-        public void UnionWithRDD(@PathVariable int idhash1, @PathVariable int idhash2)
-        {
-            testService.UnionWithRDD(idhash1,idhash2);
-        }
-
+    public void UnionWithRDD(@PathVariable int idhash1, @PathVariable int idhash2) {
+        testService.UnionWithRDD(idhash1, idhash2);
+    }
 
 
 }

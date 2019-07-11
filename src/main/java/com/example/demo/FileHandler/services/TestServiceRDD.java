@@ -34,168 +34,152 @@ public class TestServiceRDD {
     Logger logger = LoggerFactory.getLogger(FileService.class);
 
 
-    public  String getEmptyCells(int idhash)
-    {
+    public String getEmptyCells(int idhash) {
 
-        JavaRDD<String> inputFile= sc.textFile(idhash+".csv");
+        JavaRDD<String> inputFile = sc.textFile(idhash + ".csv");
         String header = inputFile.first();
 
-        String[] columnNames = header.split(";",-1);
+        String[] columnNames = header.split(";", -1);
 
-        JavaPairRDD<String,Integer> pairValue= inputFile.mapToPair(s->{
-            String[] row_arr = s.split(";",-1);
-            String idRow=row_arr[0];
+        JavaPairRDD<String, Integer> pairValue = inputFile.mapToPair(s -> {
+            String[] row_arr = s.split(";", -1);
+            String idRow = row_arr[0];
 
-            int numberOfElements = 0 ;
-            for(String row_element : row_arr){
-                if(StringUtils.isBlank(row_element)) numberOfElements++;
+            int numberOfElements = 0;
+            for (String row_element : row_arr) {
+                if (StringUtils.isBlank(row_element)) numberOfElements++;
             }
 
-                return new Tuple2<>(idRow,numberOfElements);
+            return new Tuple2<>(idRow, numberOfElements);
         });
 
-            String s="{";
-            JavaPairRDD<String,Integer> emptyPairs=pairValue.filter(t-> t._2>0);
+        String s = "{";
+        JavaPairRDD<String, Integer> emptyPairs = pairValue.filter(t -> t._2 > 0);
 
 
-            JavaRDD<String> list= emptyPairs.map(v->{
-             String value="";
-             value= v._1+":"+v._2;
-             return value ;
-            });
+        JavaRDD<String> list = emptyPairs.map(v -> {
+            String value = "";
+            value = v._1 + ":" + v._2;
+            return value;
+        });
 
 
-            List<String> listPairs=list.distinct().collect();
+        List<String> listPairs = list.distinct().collect();
 
-            String outputValue="";
-            for(int i=0; i<listPairs.size();i++)
-            {
-                outputValue+=listPairs.get(i)+",";
-            }
+        String outputValue = "";
+        for (int i = 0; i < listPairs.size(); i++) {
+            outputValue += listPairs.get(i) + ",";
+        }
 
-            outputValue="{"+outputValue+"}";
-
+        outputValue = "{" + outputValue + "}";
 
 
-    return outputValue;
+        return outputValue;
 
 
     }
 
 
+    public void UnionWithRDD(int idhash1, int idhash2) {
+        JavaRDD<String> inputFile1 = sc.textFile(Resources.getResource("Files/" + idhash1 + ".csv").getPath());
+        JavaRDD<String> inputFile2 = sc.textFile(Resources.getResource("Files/" + idhash2 + ".csv").getPath());
+
+        Dataset<Row> d1 = getDataFrame(inputFile1);
+        Dataset<Row> d2 = getDataFrame(inputFile2);
 
 
-    public void UnionWithRDD(int idhash1, int idhash2)
-    {
-        JavaRDD<String> inputFile1= sc.textFile(Resources.getResource("Files/test1.csv").getPath());
-        JavaRDD<String> inputFile2= sc.textFile(Resources.getResource("Files/test2.csv").getPath());
+        String header1 = inputFile1.first();
 
-        Dataset<Row> d1=getDataFrame(inputFile1);
-        Dataset<Row> d2=getDataFrame(inputFile2);
+        List<String> headerFile1 = new ArrayList<>(Arrays.asList(header1.split(";", -1)));
 
+        String header2 = inputFile2.first();
 
-        String header1= inputFile1.first();
-
-        List<String> headerFile1= new ArrayList<>(Arrays.asList(header1.split(";",-1)));
-
-        String header2= inputFile2.first();
-
-        List<String> headerFile2= new ArrayList<>(Arrays.asList(header2.split(";",-1)));
+        List<String> headerFile2 = new ArrayList<>(Arrays.asList(header2.split(";", -1)));
 
 
         headerFile1.addAll(headerFile2);
 
-       List<String> headers= headerFile1.stream().distinct().collect(Collectors.toList());
+        List<String> headers = headerFile1.stream().distinct().collect(Collectors.toList());
 
 
+        String colonnes = "";
 
-        String colonnes="";
 
-
-        for(String e: headers)
-        {
-            colonnes+=","+e;
+        for (String e : headers) {
+            colonnes += "," + e;
         }
 
-        List<String> allColonnes= Arrays.asList(colonnes.substring(1).split(","));
+        List<String> allColonnes = Arrays.asList(colonnes.substring(1).split(","));
 
-        List<String> ListColonnes1= new ArrayList<>(allColonnes);
+        List<String> ListColonnes1 = new ArrayList<>(allColonnes);
 
-        for(int i=0; i<ListColonnes1.size(); i++)
-        {
-            if(! headerFile1.contains(ListColonnes1.get(i)))
-            {
-                ListColonnes1.set(i,null);
+        for (int i = 0; i < ListColonnes1.size(); i++) {
+            if (!headerFile1.contains(ListColonnes1.get(i))) {
+                ListColonnes1.set(i, null);
             }
         }
 
-        List<String> ListColonnes2= new ArrayList<>(allColonnes);
+        List<String> ListColonnes2 = new ArrayList<>(allColonnes);
 
-        for(int i=0; i<ListColonnes2.size(); i++)
-        {
-            if(! headerFile2.contains(ListColonnes2.get(i)))
-            {
-                ListColonnes2.set(i,null);
+        for (int i = 0; i < ListColonnes2.size(); i++) {
+            if (!headerFile2.contains(ListColonnes2.get(i))) {
+                ListColonnes2.set(i, null);
             }
         }
 
 
-        String colonnes1="";
-        for(String e: ListColonnes1)
-        {
-            colonnes1+= ","+e;
+        String colonnes1 = "";
+        for (String e : ListColonnes1) {
+            colonnes1 += "," + e;
         }
 
-        String colonnes2="";
-        for(String e: ListColonnes2)
-        {
-            colonnes2+= ","+e;
+        String colonnes2 = "";
+        for (String e : ListColonnes2) {
+            colonnes2 += "," + e;
         }
 
-        colonnes2=colonnes2.substring(1);
-        colonnes1=colonnes1.substring(1);
+        colonnes2 = colonnes2.substring(1);
+        colonnes1 = colonnes1.substring(1);
 
         d1.createOrReplaceTempView("d1");
         d2.createOrReplaceTempView("d2");
-        Dataset<Row> d=ss.sql("select "+ colonnes1 + " from d1 union ( select " + colonnes2 +" from d2 ) ");
+        Dataset<Row> d = ss.sql("select " + colonnes1 + " from d1 union ( select " + colonnes2 + " from d2 ) ");
 
         d.show();
 
     }
 
 
-    public Dataset<Row> getDataFrame(JavaRDD<String> inputFile1)
-    {
+    public Dataset<Row> getDataFrame(JavaRDD<String> inputFile1) {
 
-        String[] allColumns1 = inputFile1.first().split(";",-1);
+        String[] allColumns1 = inputFile1.first().split(";", -1);
 
-        List<String[]> lignes1= inputFile1.map(s->{
+        List<String[]> lignes1 = inputFile1.map(s -> {
 
-            String[] rows=s.split(";",-1);
+            String[] rows = s.split(";", -1);
 
 
-            return  rows;
+            return rows;
         }).collect();
 
-        List<String[]> sublignes1= lignes1.subList(1, lignes1.size());
+        List<String[]> sublignes1 = lignes1.subList(1, lignes1.size());
 
-        JavaRDD<String[]> lines1=sc.parallelize(sublignes1);
+        JavaRDD<String[]> lines1 = sc.parallelize(sublignes1);
 
 
-
-        List<StructField> structFieldList1 =new ArrayList<>();
-        for( String col : allColumns1) {
-            structFieldList1.add(new StructField(col, DataTypes.StringType,true, Metadata.empty()));
+        List<StructField> structFieldList1 = new ArrayList<>();
+        for (String col : allColumns1) {
+            structFieldList1.add(new StructField(col, DataTypes.StringType, true, Metadata.empty()));
         }
 
 
         StructType schema = new StructType(structFieldList1.toArray(new StructField[0]));
 
 
-        JavaRDD<Row> linesRow1 = lines1.map(s-> RowFactory.create(s));
+        JavaRDD<Row> linesRow1 = lines1.map(s -> RowFactory.create(s));
 
 
-        Dataset<Row> dataFrame1 = ss.createDataFrame(linesRow1,schema);
+        Dataset<Row> dataFrame1 = ss.createDataFrame(linesRow1, schema);
         return dataFrame1;
     }
 
