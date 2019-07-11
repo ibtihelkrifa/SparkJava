@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TestServiceRDD {
@@ -31,6 +32,7 @@ public class TestServiceRDD {
     transient SparkSession ss = SparkConnection.getSession();
 
     Logger logger = LoggerFactory.getLogger(FileService.class);
+
 
     public  String getEmptyCells(int idhash)
     {
@@ -81,123 +83,104 @@ public class TestServiceRDD {
     }
 
 
-    public void UnionWithRDD2(int idhash1, int idhash2)
-    {
 
-        JavaRDD<String> inputFile1= sc.textFile(Resources.getResource("Files/test1.csv").getPath());
-        JavaRDD<String> inputFile2= sc.textFile(Resources.getResource("Files/test2.csv").getPath());
-
-        String header1= inputFile1.first();
-
-        String[] headerFile1= header1.split(";",-1);
-
-        String header2= inputFile2.first();
-
-        String[] headerFile2= header2.split(";",-1);
-       /* List<String> mergedList= new ArrayList<>();
-
-
-
-      *//*  for(int i=0; i< headerFile1.length; i++)
-        {
-           mergedList.add(headerFile1[i]);
-           l1+=","+headerFile1[i];
-
-        }*//*
-  //new
-
-
-        List<String> final1= new ArrayList<>();
-
-       */
-
-
-        String l1="";
-        String l2="";
-
-        List<StructField> structFields1= new ArrayList<>();
-        for(String col1: headerFile1)
-        {
-            l1+=", "+ col1;
-            structFields1.add(new StructField(col1, DataTypes.StringType,true, Metadata.empty()));
-        }
-
-        List<StructField> structFields2= new ArrayList<>();
-        for(String col2: headerFile2)
-        {
-            l2+=", "+col2;
-            structFields2.add(new StructField(col2, DataTypes.StringType,true, Metadata.empty()));
-        }
-
-      /*  List<StructField> structFields3= new ArrayList<>();
-
-        for(String col3: mergedList)
-        {
-            structFields3.add(new StructField(col3,DataTypes.StringType,true,Metadata.empty()));
-        }*/
-
-        StructType schema1= new StructType(structFields1.toArray(new StructField[0]));
-        StructType schema2= new StructType(structFields2.toArray(new StructField[0]));
-      //  StructType mergedSchema= new StructType(structFields3.toArray(new StructField[0]));
-
-        JavaRDD<Row> listRow1= inputFile1.map(s-> RowFactory.create(s));
-        JavaRDD<Row> listRow2= inputFile2.map(s-> RowFactory.create(s));
-
-
-        Dataset<Row> datset1= ss.createDataFrame(listRow1,schema1);
-        Dataset<Row> datset2= ss.createDataFrame(listRow2,schema2);
-
-        datset1.createOrReplaceTempView("d1");
-        datset2.createOrReplaceTempView("d2");
-
-        l1=l1.substring(1);
-        l2=l2.substring(1);
-
-        System.out.println(l1);
-        Dataset<Row> d=ss.sql("select "+ l2 +" from d2 ");
-
-        d.coalesce(1)
-                .write()
-                .mode ("overwrite")
-                .mode("append")
-                .format("com.databricks.spark.csv")
-                .option("header", "true")
-                .save("outputFiles/"+55);
-
-
-
-
-
-
-
-
-    }
 
     public void UnionWithRDD(int idhash1, int idhash2)
     {
-        Dataset<Row> d1=getDataFrame(idhash1+".csv");
-        Dataset<Row> d2=getDataFrame(idhash2+".csv");
+        JavaRDD<String> inputFile1= sc.textFile(Resources.getResource("Files/test1.csv").getPath());
+        JavaRDD<String> inputFile2= sc.textFile(Resources.getResource("Files/test2.csv").getPath());
 
-            Dataset<Row> d3=d1.union(d2);
+        Dataset<Row> d1=getDataFrame(inputFile1);
+        Dataset<Row> d2=getDataFrame(inputFile2);
 
-            d3.show();
 
+        String header1= inputFile1.first();
+
+        List<String> headerFile1= new ArrayList<>(Arrays.asList(header1.split(";",-1)));
+
+        String header2= inputFile2.first();
+
+        List<String> headerFile2= new ArrayList<>(Arrays.asList(header2.split(";",-1)));
+
+
+        headerFile1.addAll(headerFile2);
+
+       List<String> headers= headerFile1.stream().distinct().collect(Collectors.toList());
+
+
+
+        String colonnes="";
+
+
+        for(String e: headers)
+        {
+            colonnes+=","+e;
+        }
+
+        List<String> allColonnes= Arrays.asList(colonnes.substring(1).split(","));
+
+        List<String> ListColonnes1= new ArrayList<>(allColonnes);
+
+        for(int i=0; i<ListColonnes1.size(); i++)
+        {
+            if(! headerFile1.contains(ListColonnes1.get(i)))
+            {
+                ListColonnes1.set(i,null);
+            }
+        }
+
+        List<String> ListColonnes2= new ArrayList<>(allColonnes);
+
+        for(int i=0; i<ListColonnes2.size(); i++)
+        {
+            if(! headerFile2.contains(ListColonnes2.get(i)))
+            {
+                ListColonnes2.set(i,null);
+            }
+        }
+
+
+        String colonnes1="";
+        for(String e: ListColonnes1)
+        {
+            colonnes1+= ","+e;
+        }
+
+        String colonnes2="";
+        for(String e: ListColonnes2)
+        {
+            colonnes2+= ","+e;
+        }
+
+        colonnes2=colonnes2.substring(1);
+        colonnes1=colonnes1.substring(1);
+
+        d1.createOrReplaceTempView("d1");
+        d2.createOrReplaceTempView("d2");
+        Dataset<Row> d=ss.sql("select "+ colonnes1 + " from d1 union ( select " + colonnes2 +" from d2 ) ");
+
+        d.show();
 
     }
 
 
-    public Dataset<Row> getDataFrame(String path)
+    public Dataset<Row> getDataFrame(JavaRDD<String> inputFile1)
     {
-        JavaRDD<String> inputFile1= sc.textFile(Resources.getResource("Files/"+path).getPath());
 
         String[] allColumns1 = inputFile1.first().split(";",-1);
 
-        JavaRDD<String[]> lines1= inputFile1.map(s->{
+        List<String[]> lignes1= inputFile1.map(s->{
+
             String[] rows=s.split(";",-1);
 
 
             return  rows;
-        });
+        }).collect();
+
+        List<String[]> sublignes1= lignes1.subList(1, lignes1.size());
+
+        JavaRDD<String[]> lines1=sc.parallelize(sublignes1);
+
 
 
         List<StructField> structFieldList1 =new ArrayList<>();
@@ -207,6 +190,7 @@ public class TestServiceRDD {
 
 
         StructType schema = new StructType(structFieldList1.toArray(new StructField[0]));
+
 
         JavaRDD<Row> linesRow1 = lines1.map(s-> RowFactory.create(s));
 

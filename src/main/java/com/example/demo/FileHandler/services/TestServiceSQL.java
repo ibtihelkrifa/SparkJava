@@ -39,7 +39,7 @@ public class TestServiceSQL {
 
     public String getEmptyCells(int idhash) {
 
-        Dataset<Row> dataset = ss.read().format("csv").option("header", "true").load(Resources.getResource("Files/policy.csv").getPath());
+        Dataset<Row> dataset = ss.read().format("csv").option("header", "true").load(Resources.getResource("Files/"+idhash+".csv").getPath());
 
         String header[] = dataset.schema().fieldNames();
 
