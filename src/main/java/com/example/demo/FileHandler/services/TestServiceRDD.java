@@ -97,53 +97,15 @@ public class TestServiceRDD {
         List<String> headerFile2 = new ArrayList<>(Arrays.asList(header2.split(";", -1)));
 
 
-        headerFile1.addAll(headerFile2);
-
-        List<String> headers = headerFile1.stream().distinct().collect(Collectors.toList());
-
-
-        String colonnes = "";
+        List<String> allHeaders = new ArrayList<>();
+        allHeaders.addAll(headerFile1);
+        allHeaders.addAll(headerFile2);
 
 
-        for (String e : headers) {
-            colonnes += "," + e;
-        }
-
-        List<String> allColonnes = Arrays.asList(colonnes.substring(1).split(","));
-
-        List<String> ListColonnes1 = new ArrayList<>(allColonnes);
-
-        for (int i = 0; i < ListColonnes1.size(); i++) {
-            if (!headerFile1.contains(ListColonnes1.get(i))) {
-                ListColonnes1.set(i, null);
-            }
-        }
-
-        List<String> ListColonnes2 = new ArrayList<>(allColonnes);
-
-        for (int i = 0; i < ListColonnes2.size(); i++) {
-            if (!headerFile2.contains(ListColonnes2.get(i))) {
-                ListColonnes2.set(i, null);
-            }
-        }
-
-
-        String colonnes1 = "";
-        for (String e : ListColonnes1) {
-            colonnes1 += "," + e;
-        }
-
-        String colonnes2 = "";
-        for (String e : ListColonnes2) {
-            colonnes2 += "," + e;
-        }
-
-        colonnes2 = colonnes2.substring(1);
-        colonnes1 = colonnes1.substring(1);
 
         d1.createOrReplaceTempView("d1");
         d2.createOrReplaceTempView("d2");
-        Dataset<Row> d = ss.sql("select " + colonnes1 + " from d1 union ( select " + colonnes2 + " from d2 ) ");
+        Dataset<Row> d = ss.sql("select " + createQuerry(allHeaders,headerFile1) + " from d1 union ( select " + createQuerry(allHeaders,headerFile2) + " from d2 ) ");
 
         d.show();
 
