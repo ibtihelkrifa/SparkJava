@@ -1,6 +1,7 @@
 package com.example.demo.FileHandler.controllers;
 
 
+import com.example.demo.FileHandler.userDefinedException.UnionNumberFIleException;
 import com.example.demo.FileHandler.services.TestServiceRDD;
 import com.example.demo.FileHandler.services.TestServiceSQL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,7 +63,20 @@ public class TestController {
 
     @GetMapping("/RDDunion/{idhash1}/{idhash2}")
     public void UnionWithRDD(@PathVariable int idhash1, @PathVariable int idhash2) {
-        testService.UnionWithRDD(idhash1, idhash2);
+        testService.UnionWithRDD(idhash1,idhash2);
+    }
+
+
+    @GetMapping("/dynamicFilesUnion")
+    public void unionDYnamicFilesNumber(@RequestBody List<String> HashFilesLIst)
+    {
+        try {
+            testService.dynamicUNionRDD(HashFilesLIst);
+        }
+        catch(UnionNumberFIleException e)
+            {
+                System.out.println(e.getMessage());
+            }
     }
 
 

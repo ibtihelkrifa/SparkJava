@@ -1,6 +1,7 @@
 package com.example.demo.FileHandler.services;
 
 
+import com.example.demo.FileHandler.userDefinedException.UnionNumberFIleException;
 import com.example.demo.SparkConnection.SparkConnection;
 import com.google.common.io.Resources;
 import org.apache.commons.lang.StringUtils;
@@ -17,11 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import scala.Tuple2;
 
-import javax.xml.validation.Schema;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,44 +79,53 @@ public class TestServiceRDD {
     }
 
 
-    public void dynamicUNionRDD(List<Integer> idhashFIles)
+    public void dynamicUNionRDD(List<String> HashFilesList) throws UnionNumberFIleException
     {
 
-        List<String> allheaders= new ArrayList<>();
-        List<List<String>> ListSingleHeaders= new ArrayList<>();
-        List<Dataset<Row>> ListDataset= new ArrayList<>();
-        for(Integer idhashFile: idhashFIles)
-        {
-            JavaRDD<String> inputFile1 = sc.textFile(Resources.getResource("Files/test1.csv").getPath());
-            Dataset<Row> d1 = getDataFrame(inputFile1);
-            String header1 = inputFile1.first();
-            List<String> headerFile1 = new ArrayList<>(Arrays.asList(header1.split(";", -1)));
-            allheaders.addAll(headerFile1);
-            ListSingleHeaders.add(headerFile1);
-            ListDataset.add(d1);
+       if(HashFilesList.size() >1 ) {
+           List<String> allheaders = new ArrayList<>();
+           List<List<String>> ListFileContainsListSingleHeaders = new ArrayList<>();
+           List<String> ListDataset = new ArrayList<>();
 
-        }
+           for (String file : HashFilesList) {
+               JavaRDD<String> inputFile1 = sc.textFile(Resources.getResource("Files/" + file + ".csv").getPath());
+               Dataset<Row> d1 = getDataFrame(inputFile1);
+               String header1 = inputFile1.first();
+               List<String> headerFile1 = new ArrayList<>(Arrays.asList(header1.split(";", -1)));
+               allheaders.addAll(headerFile1);
+               ListFileContainsListSingleHeaders.add(headerFile1);
+               d1.createOrReplaceTempView(file);
+               ListDataset.add(file);
+
+           }
 
 
-        allheaders=allheaders.stream().distinct().collect(Collectors.toList());
+           allheaders = allheaders.stream().distinct().collect(Collectors.toList());
 
-        List<String> ListQuery= new ArrayList<>();
+           List<String> ListQuery = new ArrayList<>();
 
-        for(List<String> e: ListSingleHeaders )
-        {
-            String query= createQuerry(allheaders, e);
-            ListQuery.add(query);
-        }
+           for (List<String> ListSingleFileHeaders : ListFileContainsListSingleHeaders) {
+               String query = createQuerry(allheaders, ListSingleFileHeaders);
+               ListQuery.add(query);
+           }
 
-        String finalQuery="";
+           String finalQuery = "select " + ListQuery.get(0) + " from " + ListDataset.get(0) + " union ";
 
-        for(int i=0; i<ListQuery.size();i++)
-        {
-            finalQuery+= "select " + ListQuery.get(i) + " from " + ListDataset.get(i) +" union";
-        }
+           for (int i = 1; i < ListQuery.size(); i++) {
+               finalQuery += "( select " + ListQuery.get(i) + " from " + ListDataset.get(i) + " ) union  ";
+           }
 
-        finalQuery.substring(0, finalQuery.length()-5);
-        ss.sql(finalQuery);
+           finalQuery = finalQuery.substring(0, finalQuery.length() - 7);
+           Dataset<Row> d = ss.sql(finalQuery);
+           System.out.println(finalQuery);
+           d.show();
+
+       }
+
+       else
+       {
+           throw new UnionNumberFIleException("l'union se fait entre au minimum deux fichiers");
+       }
 
     }
 
