@@ -71,12 +71,19 @@ public class TestController {
     public void unionDYnamicFilesNumber(@RequestBody List<String> HashFilesLIst)
     {
         try {
-            testService.dynamicUNionRDD(HashFilesLIst);
+            testService.dynamicUnionRDD(HashFilesLIst);
         }
         catch(UnionNumberFIleException e)
             {
                 System.out.println(e.getMessage());
             }
+    }
+
+
+    @GetMapping("/unionRDD")
+    public void unionRDD()
+    {
+        testService.UnionRDD();
     }
 
 
