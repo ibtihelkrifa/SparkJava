@@ -242,17 +242,18 @@ public class TestServiceRDD {
         allHeaders.stream().distinct();
         JavaRDD<String> finalSingleFileListHeaders= sc.parallelize(listFilesContainsListHeaders).map(fileListHeader -> {
 
-
-            for(int i=0; i< allHeaders.size();i++)
+            List<String> copyAllHeaders= new ArrayList<>();
+            copyAllHeaders.addAll(allHeaders);
+            for(int i=0; i< copyAllHeaders.size();i++)
             {
-                if(! fileListHeader.contains(allHeaders.get(i)))
+                if(! fileListHeader.contains(copyAllHeaders.get(i)))
                 {
-                    allHeaders.set(i,null);
+                    copyAllHeaders.set(i,null);
                 }
             }
 
             String stringHeaders="";
-            for(String e: allHeaders)
+            for(String e: copyAllHeaders)
             {
                 stringHeaders+= ";"+e;
             }
@@ -268,7 +269,7 @@ public class TestServiceRDD {
           //  files.get(i).set(0,finalSingleFileListHeaders.collect().get(i));
         }
 
-
+/*
 
        JavaRDD<JavaRDD<String>>  RDDFiles=sc.parallelize(files).map(file-> sc.parallelize(file));
 
@@ -292,7 +293,7 @@ public class TestServiceRDD {
        Dataset<Row> dataset= ss.createDataFrame(finalRddRowFile, schema);
 
        dataset.show();
-
+*/
 
     }
 
