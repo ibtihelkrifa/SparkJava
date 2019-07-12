@@ -230,10 +230,12 @@ public class TestServiceRDD {
         for(int i=0;i< idhashFiles.size();i++)
         {
             JavaRDD<String> inputFile = sc.textFile(Resources.getResource("Files/"+idhashFiles.get(i)+".csv").getPath());
+            String header = inputFile.first();
+            JavaRDD<String> noHeaderRdd =  inputFile.filter( s -> !s.equalsIgnoreCase(header));
             List<String> fileHeader= Arrays.asList(inputFile.first().split(";"));
             allHeaders.addAll(fileHeader);
             listFilesContainsListHeaders.add(fileHeader);
-            filesRDD.add(inputFile);
+            filesRDD.add(noHeaderRdd);
 
 
 
@@ -267,6 +269,9 @@ public class TestServiceRDD {
 
         }
 
+        unionRdd.collect();
+
+        System.out.println("finished");
     }
 
 
