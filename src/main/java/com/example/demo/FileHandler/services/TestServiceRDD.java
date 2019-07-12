@@ -221,7 +221,7 @@ public class TestServiceRDD {
         List<String> allHeaders= new ArrayList<>();
         List<List<String>> listFilesContainsListHeaders= new ArrayList<>();
 
-        List<List<String>> files= new ArrayList<>();
+        List<JavaRDD<String>> filesRDD= new ArrayList<>();
 
         List<String> idhashFiles= new ArrayList<>();
         idhashFiles.add("test1");
@@ -233,67 +233,39 @@ public class TestServiceRDD {
             List<String> fileHeader= Arrays.asList(inputFile.first().split(";"));
             allHeaders.addAll(fileHeader);
             listFilesContainsListHeaders.add(fileHeader);
-            files.add(inputFile.collect());
+            filesRDD.add(inputFile);
 
 
 
         }
 
-        allHeaders.stream().distinct();
-        JavaRDD<String> finalSingleFileListHeaders= sc.parallelize(listFilesContainsListHeaders).map(fileListHeader -> {
+        List<String> allHeadersDistinct = allHeaders.stream().distinct().collect(Collectors.toList());
 
-            List<String> copyAllHeaders= new ArrayList<>();
-            copyAllHeaders.addAll(allHeaders);
-            for(int i=0; i< copyAllHeaders.size();i++)
-            {
-                if(! fileListHeader.contains(copyAllHeaders.get(i)))
-                {
-                    copyAllHeaders.set(i,null);
+        JavaRDD<String> unionRdd = null;
+        for(int i = 0 ; i < idhashFiles.size(); i++){
+
+
+            List<String> rdd_i_header = listFilesContainsListHeaders.get(i);
+
+            JavaRDD<String> readyForUnionRDD = filesRDD.get(i).map( row -> {
+                List<String> row_arr = Arrays.asList(row.split(";", -1));
+                List<String> result_row_arr = new ArrayList<>();
+                for(int j = 0 ; j < allHeadersDistinct.size() ; j++){
+                    if(rdd_i_header.contains(allHeadersDistinct.get(j))) {
+                        result_row_arr.add(row_arr.get(rdd_i_header.indexOf(allHeadersDistinct.get(j))));
+                    }
+                    else {
+                        result_row_arr.add("Col_Not_Found");
+                    }
                 }
-            }
+                return String.join(";",result_row_arr);
+            });
 
-            String stringHeaders="";
-            for(String e: copyAllHeaders)
-            {
-                stringHeaders+= ";"+e;
-            }
+            if(unionRdd == null)
+                unionRdd = readyForUnionRDD;
+            else unionRdd = readyForUnionRDD.union(unionRdd);
 
-            return stringHeaders.substring(1);
-
-        });
-
-
-        for(int i=0; i< files.size();i++)
-        {
-            System.out.println(finalSingleFileListHeaders.collect().get(i));
-          //  files.get(i).set(0,finalSingleFileListHeaders.collect().get(i));
         }
-
-/*
-
-       JavaRDD<JavaRDD<String>>  RDDFiles=sc.parallelize(files).map(file-> sc.parallelize(file));
-
-      List<JavaRDD<String>> listRddFiles=  RDDFiles.collect();
-
-       JavaRDD<String> finalFile= listRddFiles.get(0);
-
-       for(int i=1; i< listRddFiles.size();i++)
-       {
-           finalFile.union(listRddFiles.get(i));
-       }
-
-       JavaRDD<Row> finalRddRowFile=finalFile.map(s-> RowFactory.create(s));
-
-       List<StructField> listStructFields= new ArrayList<>();
-      JavaRDD<StructField> listRDDStructFields= sc.parallelize(allHeaders).map(header -> new StructField(header, DataTypes.StringType,true, Metadata.empty()));
-       listStructFields= listRDDStructFields.collect();
-
-       StructType schema= new StructType(listStructFields.toArray(new StructField[0]));
-
-       Dataset<Row> dataset= ss.createDataFrame(finalRddRowFile, schema);
-
-       dataset.show();
-*/
 
     }
 
